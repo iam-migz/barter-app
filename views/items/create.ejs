@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head.ejs'); %> 
+<body>
+    <form action="/items" method="POST">
+
+        <label for="title">item title: </label>
+        <input type="text" name="title"> <br>
+        
+        <label for="description">item description: </label>
+        <input type="text" name="description"> <br>
+
+        <label for="price">item price: </label>
+        <input type="number" name="price"> <br>
+        <button>Submit</button>
+    </form>
+</body>
+</html>

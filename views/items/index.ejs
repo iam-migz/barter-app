@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head.ejs'); %> 
+<body>
+
+    <%- include('../partials/nav.ejs'); %> 
+    <h1>index page</h1>
+    <% if(items.length > 0){ %>
+        <% items.forEach(item => { %>
+            <%= item.title %> <br>
+            <%= item.description %> <br> 
+            <%= item.price %> <br>
+            <a href="/items/<%= item.id %>"><button>View More</button></a> <br>
+        <% } ) %> 
+    <% } %>
+
+
+</body>
+</html>

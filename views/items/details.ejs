@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head.ejs'); %> 
+<body>
+
+    <%= item.title %> <br>
+    <%= item.description %> <br> 
+    <%= item.price %> <br>
+    <!-- data-doc = custom attribute in html -->
+    <a class="delete" data-doc="<%= item._id %>"><button>Delete</button></a>
+
+    <script>
+        const del = document.querySelector('a');
+
+        del.addEventListener('click', e=> {
+            const endpoint = `/items/${del.dataset.doc}`;
+
+            fetch(endpoint, {
+                method: 'DELETE'
+            })// must receive json data,
+            .then(response => response.json())  // parse json
+            .then(data => window.location.href = data.redirect ) //redirect
+            .catch(err => console.log(err));
+        })
+    </script>
+</body>
+</html>

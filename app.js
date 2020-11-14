@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
 });
 app.get('/about', (req, res) => {
     // res.sendFile('./views/about.html', { root: __dirname });
-    res.render('about');
+    res.render('about', { title: 'About Page' });
 });
 
 // item routes
@@ -41,5 +41,5 @@ app.use('/items',itemRoutes); // scoping
 
 // 404 page, using a middleware, 'catch-all' 
 app.use((req, res) => {
-    res.status(404).render('404');
+    res.status(404).render('404', { title: '404' });
 });

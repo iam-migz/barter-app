@@ -2,17 +2,30 @@
 <html lang="en">
 <%- include('../partials/head.ejs'); %> 
 <body>
-    <form action="/items" method="POST">
+    <%- include('../partials/nav.ejs'); %> 
+    <div class="container">
 
-        <label for="title">item title: </label>
-        <input type="text" name="title"> <br>
-        
-        <label for="description">item description: </label>
-        <input type="text" name="description"> <br>
-
-        <label for="price">item price: </label>
-        <input type="number" name="price"> <br>
-        <button>Submit</button>
-    </form>
+        <form action="/items" method="POST">
+            <div class="form-row mt-4">
+              <div class="form-group col-md-6">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" name="title" placeholder="Item title">
+              </div>
+              <div class="form-group col-md-3">
+                <label for="price">Price</label>
+                <input type="number" class="form-control" name="price" placeholder="price">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="address">Address</label>
+              <input type="text" class="form-control" name="address" placeholder="Cebu City, Philippines" disabled>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" name="description" rows="3"></textarea>
+              </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+    </div>
 </body>
 </html>

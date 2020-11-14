@@ -2,18 +2,35 @@
 <html lang="en">
 <%- include('../partials/head.ejs'); %> 
 <body>
+  <%- include('../partials/nav.ejs'); %> 
 
-    <%- include('../partials/nav.ejs'); %> 
-    <h1>index page</h1>
-    <% if(items.length > 0){ %>
-        <% items.forEach(item => { %>
-            <%= item.title %> <br>
-            <%= item.description %> <br> 
-            <%= item.price %> <br>
-            <a href="/items/<%= item.id %>"><button>View More</button></a> <br>
-        <% } ) %> 
-    <% } %>
+  <div class="container">
+    
+    <% 
+      // grid system 1 row for every 3 items/cols
+      let array, temparray, chunk, i; 
+      array = items;
+      chunk = 3;
+      for(i = 0; i < array.length; i += chunk){
+        temparray = array.slice(i, i + chunk);
+    %> 
+        <div class="row mt-4">
 
+          <%  temparray.forEach(elem => { %>
+            <div class="card col-md-3 mx-auto" style="width: 17rem;">
+                <img src="img/watch.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title"><%= elem.title %></h5>
+                  <p class="car-text">₱ <%= elem.price %></p>
+                  <a href="/items/<%= elem.id %>" class="btn btn-primary">View more</a>
+                </div>
+            </div>
 
+          <% }); %>
+        </div>
+    <%  } %>
+     
+    
+  </div>
 </body>
 </html>

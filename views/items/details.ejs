@@ -2,15 +2,26 @@
 <html lang="en">
 <%- include('../partials/head.ejs'); %> 
 <body>
+    <%- include('../partials/nav.ejs'); %> 
 
-    <%= item.title %> <br>
-    <%= item.description %> <br> 
-    <%= item.price %> <br>
-    <!-- data-doc = custom attribute in html -->
-    <a class="delete" data-doc="<%= item._id %>"><button>Delete</button></a>
+    <div class="container">
+        <div class="card mx-auto mt-4" style="width: 25rem;">
+            <img src="/img/watch.jpg" class="card-img-top"  alt="Card image cap">
+            <div class="card-body">
+              <h5 class="card-title"><%= item.title %></h5>
+              <p class="card-text"><%= item.description %></p>
+              <p class="card-text"><%= item.price %></p>
+
+              <!-- data-doc = custom attribute in html -->
+              <a href="#" class="btn btn-danger delete" data-doc="<%= item._id %>">Delete</a>
+            </div>
+        </div>
+
+    </div>
+  
 
     <script>
-        const del = document.querySelector('a');
+        const del = document.querySelector('a.delete');
 
         del.addEventListener('click', e=> {
             const endpoint = `/items/${del.dataset.doc}`;

@@ -1,5 +1,45 @@
-body{
-    color: white;
-    background: black;
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+nav {
+    display: flex;
+    /* background: grey; */
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 1px 1px 5px black;
+}
+nav .site-title{
+    margin-left: 30px;
+    margin-top: 10px;
+}
+nav ul {
+    display: flex;
+}
 
+nav ul li {
+    list-style: none;
+    padding: 20px;
+}
+nav ul li a:hover{
+    color: blue;
+}
+
+@media only screen and (max-width: 600px) {
+    nav {
+        display: block;
+    }
+    nav .site-title{
+        width: 100%;
+        margin: 0;
+        text-align: center;
+    }
+    nav ul {
+        display: block;
+    }
+    nav ul li {
+        text-align: center;
+        padding: 10px;
+    }
 }

@@ -3,6 +3,7 @@
     padding: 0;
     box-sizing: border-box;
 }
+/* Header and Navigation Style */
 nav {
     display: flex;
     /* background: grey; */
@@ -42,4 +43,24 @@ nav ul li a:hover{
         text-align: center;
         padding: 10px;
     }
+}
+
+/* 2nd Navigation Style, user navigation */
+#authnav {
+    display: flex;
+    justify-content: space-between;
+}
+#authnav ul {
+    justify-content: flex-end;
+}
+
+#authnav li {
+    list-style: none;
+    padding: 0 10px;
+
+}
+#authnav li:nth-child(1){
+    font-size: large;
+    color: grey;
+    align-self: center;
 }

@@ -1,0 +1,28 @@
+<div class="row mt-4" id="authnav">
+    <div class="col-md-6">
+        <% if(user){ %> 
+            <a href="/items/create"><button type="button" class="btn btn-primary">List an Item</button></a>
+            <a href="/items/youritems"><button type="button" class="btn btn-outline-secondary">Your Items</button></a>
+            <a href="/items/request">
+                <button type="button" class="btn btn-outline-success">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-left-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z"/>
+                    </svg>
+                    Barter Requests
+                    <span class="badge badge-secondary">1</span>
+                </button>
+            </a>
+        <% } %> 
+    </div>
+    <div class="col-md-6">
+        <ul class="d-flex">
+            <% if(user){ %> 
+                <li>Welcome, <%= user.username  %></li>
+                <li><a href="/logout"><button type="button" class="btn btn-danger">Log out</button></a></li>
+            <% } else { %> 
+                <li><a href="/signup"><button type="button" class="btn btn-primary">Sign up</button></a></li>
+                <li><a href="/login"><button type="button" class="btn btn-outline-primary">Log in</button></a></li>
+            <% } %> 
+      </ul>
+    </div>
+</div>

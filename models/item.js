@@ -10,12 +10,25 @@ const itemSchema = new Schema({
         type: String,
         required: true
     },
+    address: {
+        type: String,
+        required: true
+    },
+    seller: {
+        type: String,
+        required: true
+    },
     price: {
         type: Number,
         min: 1,
         required: true
+    },
+    availability: {
+        type: Boolean,
+        required: true
     }
 }, { timestamps: true });
+
 
 // 1st param: will look for our items collection in db
 const Item = mongoose.model('Item', itemSchema);

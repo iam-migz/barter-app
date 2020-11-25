@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head.ejs'); %> 
+<body>
+    <%- include('../partials/nav.ejs'); %> 
+
+    <div class="container">
+    <%- include('../partials/usernav.ejs'); %> 
+    <h1 class="display-4 my-4">
+        Barter page
+    </h1>
+    <!--  user user's items / seller seller's product -->
+        <form action="/items/request" method="POST">
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h2><%= user.username %></h2>
+                    
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1">Requestor's Items</label>
+                            <select class="form-control" id="exampleFormControlSelect1"  data-requestor="<%=user._id %>">
+                            <% userItems.forEach(item => {  %> 
+                                <option value="<%=item._id%>"><%= item.title %> - ₱ <%= item.price %> </option>
+                            <% }); %> 
+                            </select>
+                        </div>
+
+                </div>
+                <div class="col-md-6">
+                    <h2><%= seller.username %> </h2>
+                    <label for="sellerItem">Requestee's Item</label for="se">
+                    <input class="form-control" id="sellerItem" data-doc="<%= product._id %>"  data-seller="<%=seller._id%> " type="text" placeholder="<%= product.title %> - ₱ <%= product.price  %> " readonly>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1">Add a messsage to the offer</label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                    </div>
+
+                </div>
+                <button type="submit" class="btn btn-success mx-auto">Send Request</button>
+            </div>
+        </form>
+    </div>
+
+<script>
+    const form = document.querySelector('form');
+    form.addEventListener('submit', async e => {
+
+        e.preventDefault();
+
+        // GET THE VALUES
+        const requestor = form[0].dataset.requestor.replace(/\s/g,'');
+        const requestee = form[1].dataset.seller.replace(/\s/g,'');
+        const requestorProduct = form[0].value.replace(/\s/g,'');
+        const requesteeProduct = form[1].dataset.doc.replace(/\s/g,'');
+        const message = form[2].value;
+
+        try {
+            const res = await fetch('/items/request', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    requestor,
+                    requestee,
+                    requestorProduct,
+                    requesteeProduct,
+                    message,
+                    response: 'pending'
+                }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            if(data.status){
+                location.assign('/');
+            }
+        }catch(err){
+            console.log(err);
+        }
+
+    });
+</script>
+
+</body>
+</html>

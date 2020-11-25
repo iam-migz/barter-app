@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head.ejs'); %> 
+<body>
+    <%- include('../partials/nav.ejs'); %> 
+
+    <div class="container">
+    <%- include('../partials/usernav.ejs'); %> 
+
+        <div class="row">
+
+            <div class="history">
+                <h2>Barter History</h2>
+                
+            </div>
+
+            <h2>incoming request</h2>
+            <div class="incoming"></div>
+        </div>
+        <div class="row">
+            <h2>outgoing request</h2>
+           <div class="outgoing"></div>
+        </div>
+
+
+
+
+    </div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script>
+
+    document.addEventListener('DOMContentLoaded', e => {
+        const incoming_box = document.querySelector('.incoming');
+        const outgoing_box = document.querySelector('.outgoing');
+        
+        fetch('/items/incoming')
+            .then(data => data.json())
+            .then(res => {
+                let box = '';
+                res.forEach(request => {
+                    if(request.response == 'pending'){
+                        const message = request.message;
+                        const response = request.response;
+                        const requestor = JSON.parse(request.requestor);
+                        const requestorProduct = JSON.parse(request.requestorProduct);
+                        const requestee = JSON.parse(request.requestee);
+                        const requesteeProduct = JSON.parse(request.requesteeProduct);
+
+                        box +=  `<div class="card bg-primary mb-3 mx-auto" style="max-width: 35rem; color: white;">
+                                    <div class="card-header text-center">Status: ${response}</div>
+                                    <div class="d-flex">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Requestor: ${requestor.username}</h5>
+                                            <p class="card-text">${requestorProduct.title}</p>
+                                            <p class="card-text">${requestorProduct.description}</p>
+                                            <p class="card-text">₱ ${requestorProduct.price}</p>
+                                            <p class="card-text">${requestorProduct.address}</p>
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">Requestee: ${requestee.username} (you)</h5>
+                                            <p class="card-text">${requesteeProduct.title}</p>
+                                            <p class="card-text">${requesteeProduct.description}</p>
+                                            <p class="card-text">₱ ${requesteeProduct.price}</p>
+                                            <p class="card-text">${requesteeProduct.address}</p>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        Requestor's message ${message} <br>
+                                        <button class="btn btn-success" id="accept" data-response="accepted" data-id="${request._id}">Accept</button>
+                                        <button class="btn btn-danger" id="reject" data-response="denied"  data-id="${request._id}">Reject</button>
+                                    </div>
+                                </div>`;
+                    }
+                });
+
+                incoming_box.innerHTML += box;
+                // incoming request buttons
+                const accept = document.querySelector('#accept');
+                if(accept != null){
+                    accept.addEventListener('click', () => {
+                    fetch(`/items/update/${accept.dataset.id}`, {
+                        method: 'POST',
+                        body: JSON.stringify({ "response": accept.dataset.response }),
+                        headers: { 'Content-Type': 'application/json' }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.response){
+                            location.replace('/items/request');
+                        }else{
+                            console.log('something went wrong, update failed');
+                        }
+                    })
+                    .catch(err => console.log(err));
+                    });
+                } 
+         
+            
+                const reject = document.querySelector('#reject');
+                if(reject != null){
+                    reject.addEventListener('click', () => {
+                    fetch(`/items/update/${reject.dataset.id}`, {
+                        method: 'POST',
+                        body: JSON.stringify({ "response": reject.dataset.response }),
+                        headers: { 'Content-Type': 'application/json' }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.response){
+                            location.replace('/items/request');
+                        }else{
+                            console.log('something went wrong, update failed');
+                        }
+                    })
+                    .catch(err => console.log(err));
+                    });
+                }
+
+            }).catch(err => console.log(err)); // end of incoming
+
+
+         
+        fetch('/items/outgoing')
+            .then(data => data.json())
+            .then(res =>{
+                let box = '';
+                res.forEach(request => {
+                    // console.log('request', request);
+                    const message = request.message;
+                    const response = request.response;
+                    const requestor = JSON.parse(request.requestor);
+                    const requestorProduct = JSON.parse(request.requestorProduct);
+                    const requestee = JSON.parse(request.requestee);
+                    const requesteeProduct = JSON.parse(request.requesteeProduct);
+
+                    box +=  `<div class="card bg-secondary mb-3 mx-auto" style="max-width: 35rem; color: white;">
+                                    <div class="card-header text-center">Status: ${response}</div>
+                                    <div class="d-flex">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Requestor: ${requestor.username} (you)</h5>
+                                            <p class="card-text">${requestorProduct.title}</p>
+                                            <p class="card-text">${requestorProduct.description}</p>
+                                            <p class="card-text">₱ ${requestorProduct.price}</p>
+                                            <p class="card-text">${requestorProduct.address}</p>
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">Requestee: ${requestee.username}</h5>
+                                            <p class="card-text">${requesteeProduct.title}</p>
+                                            <p class="card-text">${requesteeProduct.description}</p>
+                                            <p class="card-text">₱ ${requesteeProduct.price}</p>
+                                            <p class="card-text">${requesteeProduct.address}</p>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        Your barter message: ${message}
+                                    </div>
+                                </div>`;
+                    outgoing_box.innerHTML += box;
+                });
+            })
+            .catch(err => console.log(err)); // end of outgoing
+            
+        const history = document.querySelector('.history');
+        // fetch all
+        fetch('/items/all')
+            .then(data => data.json())
+            .then(res => {
+                let box = '';
+                res.forEach(request => {
+                    if(request.response == 'accepted'){
+                        const message = request.message;
+                        const response = request.response;
+                        const requestor = JSON.parse(request.requestor);
+                        const requestorProduct = JSON.parse(request.requestorProduct);
+                        const requestee = JSON.parse(request.requestee);
+                        const requesteeProduct = JSON.parse(request.requesteeProduct);
+                        box += `<div class="card bg-light mb-3" style="max-width: 15rem;">
+                                    <div class="card-header">
+                                        ${requestorProduct.title} 
+                                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-left-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z"/>
+                                        </svg>
+                                        ${requesteeProduct.title} 
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Successful Barter</h5>
+                                        <p class="card-text">Requestor: ${requestor.username}</p>
+                                        <p class="card-text">Requestee: ${requestee.username}</p>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                            Get in-contact
+                                        </button>
+                                        
+                                        <!-- Modal -->
+                                        <div class="modal fade " id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Get in-touch</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                </div>
+
+                                                <div class="modal-body d-flex">
+                                    
+                                                    <div class="pr-4">
+                                                        <p class="card-text">Requestor: ${requestor.username}</p>
+                                                        <p class="card-text">Email: ${requestor.email}</p>
+                                                        <p class="card-text">Address: ${requestorProduct.address}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p class="card-text">Requestee: ${requestee.username}</p>
+                                                        <p class="card-text">Email: ${requestee.email}</p>
+                                                        <p class="card-text">Address: ${requesteeProduct.address}</p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`;
+                    }
+                }); // end of foreach
+                history.innerHTML += box;
+                
+            }).catch(err => console.log(err));
+    }); // end of all
+    
+     
+     
+    $('#myModal').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+    })
+
+</script>
+
+</body>
+</html>

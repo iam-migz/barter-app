@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head.ejs'); %> 
+<body>
+  <%- include('../partials/nav.ejs'); %> 
+
+  <div class="container">
+    
+    <%- include('../partials/usernav.ejs'); %> 
+    <h1 class="display-4">Your items <%= (4>2) ? 'miguel': 'false';  %> </h1>
+    <div class="row">
+    <% if(items.length != 0){ %> 
+    <% items.forEach(elem => {  %> 
+        <% const createdAt = `${elem.createdAt.getDate()}/${elem.createdAt.getMonth()}/${elem.createdAt.getFullYear()}` 
+           const updatedAt = `${elem.updatedAt.getDate()}/${elem.updatedAt.getMonth()}/${elem.updatedAt.getFullYear()}` %> 
+        <div class="card col-md-3 mx-auto" style="width: 17rem;">
+
+            <span class="badge badge-pill badge-<%= (elem.availability)?'success':'secondary' %> mx-auto mt-4" style="width: 8rem;"><%= (elem.availability)?'Item Listed':'Item Unlisted' %></span>
+
+            <img src="/img/watch.jpg" class="card-img-top" alt="item image">
+            <div class="card-body">
+              <h5 class="card-title"><%= elem.title %></h5>
+              <p class="card-text">₱ <%= elem.price %></p>
+              <p class="card-text"> <%= elem.address %></p>
+              <p class="card-text">Updated at: <%= updatedAt %></p>
+              <p class="card-text">Created at: <%= createdAt %></p>
+              <a href="#" class="btn btn-danger delete" data-doc="<%= elem._id %>">Delete</a>
+            </div>
+        </div>
+    <% }); %> 
+    <% } else { %>
+        <blockquote class="font-italic mt-4 blockquote text-center">You have no items listed yet. Click on <mark class=""> List an Item</mark> button to add your item</blockquote>
+    <% } %>
+    </div>
+  </div>
+
+  <script>
+        const del = document.querySelector('a.delete');
+
+        del.addEventListener('click', e=> {
+            const endpoint = `/items/${del.dataset.doc}`;
+
+            fetch(endpoint, {
+                method: 'DELETE'
+            })// must receive json data,
+            .then(response => response.json())  // parse json
+            .then(data => window.location.href = data.redirect ) //redirect
+            .catch(err => console.log(err));
+        })
+    </script>
+</body>
+</html>

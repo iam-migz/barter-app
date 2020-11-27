@@ -60,44 +60,31 @@ const item_youritems_get = (req, res) => {
         .catch(err => console.log(err));
 }
 
-const item_barter_get = (req, res) => {
+const item_barter_get = async (req, res) => {
     const prodID = req.params.prodID;
     const sellerID = req.params.sellerID;
     const userID = res.locals.user._id;
 
-    // get product
-    Item.findById(prodID)
-        .then(product => {
-            console.log(product);
-            // get seller
-            User.findById(sellerID)
-                .then(seller => {
-                    console.log(seller)
-                    // get user
-                    User.findById(userID)
-                        .then(user => {
-                            console.log(user);
-                            // get all user items   
-                            Item.find( {"seller": userID })
-                                .then(userItems => {
+    try {
+        const product = await Item.findById(prodID);
 
-                                    // pass all data
-                                    res.render('items/barter', { 
-                                        title: 'Barter',
-                                        seller,
-                                        user,
-                                        product,
-                                        userItems
-                                    });
-                                    console.log('user Items: ', userItems);
-                                })
-                                .catch(userItemsErr => userItemsErr);
-                        })  
-                        .catch(userErr => console.log(userErr));
-                })
-                .catch(sellErr => console.log(sellErr));
-        })
-        .catch(prodErr => console.log(prodErr));
+        const seller = await User.findById(sellerID);
+
+        const user = await User.findById(userID);
+
+        const userItems = await Item.find( {"seller": userID });
+
+        res.render('items/barter', { 
+            title: 'Barter',
+            product,
+            seller,
+            user,
+            userItems
+        });
+
+    } catch (err){
+        console.log(err);
+    }
 }
 
 const item_barter_request_post = (req, res) => {
@@ -113,123 +100,103 @@ const item_barter_request_get =  (req, res) => { // ajax
     res.render('items/request', { title: 'Request'});
 }
 
-const request_outgoing = (req, res) => {
+const request_outgoing = async (req, res) => {
     const userID = res.locals.user._id;
-    let final = [];
-    Barter.find({'requestor': userID})
-        .then(outgoing => {
-            outgoing.forEach((request, index) => {
-                // get the requestee
-                User.findById(request.requestee)
-                    .then(seller => {
-                        request.requestee = JSON.stringify(seller);
-                        // get the requestee product
-                        Item.findById(request.requesteeProduct)
-                            .then(product => {
-                                request.requesteeProduct = JSON.stringify(product);
-                                // get the requestor 
-                                User.findById(request.requestor)
-                                    .then(buyer => {
-                                        request.requestor = JSON.stringify(buyer);
-                                        // get the requestor product
-                                        Item.findById(request.requestorProduct)
-                                            .then(requestorProduct => {
-                                                request.requestorProduct = JSON.stringify(requestorProduct);
-                                                // console.log('Outgoing: ', outgoing);
-                                                final.push(request);
-                                                // console.log('final and ', index, ' ', final);
-                                                
-                                                if(final.length == outgoing.length){
-                                                    console.log(final);
-                                                    res.json(final);
-                                                }
+    try {
+        const outgoing = await Barter.find({'requestor': userID});
+        outgoing.forEach(async (request, index) => {
+            // get all requestee
+            const seller = await User.findById(request.requestee);
+            request.requestee =  JSON.stringify(seller);
 
-                                            }).catch(requestorProductErr=>console.log(requestorProductErr));
-                                    }).catch(buyErr=>console.log(buyErr));
-                            }).catch(prodErr=>console.log(prodErr));
-                            // get the requestee product
-                        }).catch(sellerErr => console.log(sellerErr));
-            }); // end of forEach  
-        }).catch(outgoingErr => console.log(outgoingErr));
+            // get the requestee's product
+            const product = await Item.findById(request.requesteeProduct);
+            request.requesteeProduct = JSON.stringify(product);
+
+            // get the requestor 
+            const buyer = await User.findById(request.requestor);
+            request.requestor = JSON.stringify(buyer);
+            
+            // get the requestor's product
+            const requestorProduct = await Item.findById(request.requestorProduct);
+            request.requestorProduct = JSON.stringify(requestorProduct);
+
+            if(index == outgoing.length-1){
+                setTimeout(() => {
+                    res.json(outgoing);
+                }, 1500);
+            }
+        });
+
+    } catch (err){
+        console.log(err);
+    }
 }
 
-const request_incoming = (req, res) => {
+const request_incoming = async (req, res) => {
     const userID = res.locals.user._id;
-    let final = [];
-    Barter.find({'requestee': userID})
-        .then(outgoing => {
-            outgoing.forEach((request, index) => {
-                // get the requestee
-                User.findById(request.requestee)
-                    .then(seller => {
-                        request.requestee = JSON.stringify(seller);
-                        // get the requestee product
-                        Item.findById(request.requesteeProduct)
-                            .then(product => {
-                                request.requesteeProduct = JSON.stringify(product);
-                                // get the requestor 
-                                User.findById(request.requestor)
-                                    .then(buyer => {
-                                        request.requestor = JSON.stringify(buyer);
-                                        // get the requestor product
-                                        Item.findById(request.requestorProduct)
-                                            .then(requestorProduct => {
-                                                request.requestorProduct = JSON.stringify(requestorProduct);
-                                                // console.log('Outgoing: ', outgoing);
-                                                final.push(request);
-                                                // console.log('final and ', index, ' ', final);
-                                                
-                                                if(final.length == outgoing.length){
-                                                    console.log(final);
-                                                    res.json(final);
-                                                }
+    try {
+        const incoming = await Barter.find({'requestee': userID});
+        incoming.forEach(async (request, index) => {
+            // get all requestee
+            const seller = await User.findById(request.requestee);
+            request.requestee =  JSON.stringify(seller);
 
-                                            }).catch(requestorProductErr=>console.log(requestorProductErr));
-                                    }).catch(buyErr=>console.log(buyErr));
-                            }).catch(prodErr=>console.log(prodErr));
-                            // get the requestee product
-                        }).catch(sellerErr => console.log(sellerErr));
-            }); // end of forEach  
-        }).catch(outgoingErr => console.log(outgoingErr));
+            // get the requestee's product
+            const product = await Item.findById(request.requesteeProduct);
+            request.requesteeProduct = JSON.stringify(product);
+
+            // get the requestor 
+            const buyer = await User.findById(request.requestor);
+            request.requestor = JSON.stringify(buyer);
+            
+            // get the requestor's product
+            const requestorProduct = await Item.findById(request.requestorProduct);
+            request.requestorProduct = JSON.stringify(requestorProduct);
+
+            if(index == incoming.length-1){
+                setTimeout(() => {
+                    res.json(incoming);
+                }, 1500);
+            }
+        });
+
+    } catch (err){
+        console.log(err);
+    }
 }
 
-const request_all = (req, res) => {
+const request_all = async (req, res) => {
     const userID = res.locals.user._id;
-    let final = [];
-    Barter.find().or([{ requestor: userID }, { requestee: userID }])
-        .then(barter =>{
-            barter.forEach((request, index) => {
-                // get the requestee
-                User.findById(request.requestee)
-                    .then(seller => {
-                        request.requestee = JSON.stringify(seller);
-                        // get the requestee product
-                        Item.findById(request.requesteeProduct)
-                            .then(product => {
-                                request.requesteeProduct = JSON.stringify(product);
-                                // get the requestor 
-                                User.findById(request.requestor)
-                                    .then(buyer => {
-                                        request.requestor = JSON.stringify(buyer);
-                                        // get the requestor product
-                                        Item.findById(request.requestorProduct)
-                                            .then(requestorProduct => {
-                                                request.requestorProduct = JSON.stringify(requestorProduct);
-                                                // console.log('barter: ', barter);
-                                                final.push(request);
-                                                // console.log('final and ', index, ' ', final);
-                                                
-                                                if(final.length == barter.length){
-                                                    res.json(final);
-                                                }
+    try {
+        const barter = await Barter.find().or([{ requestor: userID }, { requestee: userID }]);
+        barter.forEach(async (request, index) => {
+            // get all requestee
+            const seller = await User.findById(request.requestee);
+            request.requestee =  JSON.stringify(seller);
 
-                                            }).catch(requestorProductErr=>console.log(requestorProductErr));
-                                    }).catch(buyErr=>console.log(buyErr));
-                            }).catch(prodErr=>console.log(prodErr));
-                            // get the requestee product
-                        }).catch(sellerErr => console.log(sellerErr));
-            }); // end of forEach  
-        }).catch(err => console.log(err));
+            // get the requestee's product
+            const product = await Item.findById(request.requesteeProduct);
+            request.requesteeProduct = JSON.stringify(product);
+
+            // get the requestor 
+            const buyer = await User.findById(request.requestor);
+            request.requestor = JSON.stringify(buyer);
+            
+            // get the requestor's product
+            const requestorProduct = await Item.findById(request.requestorProduct);
+            request.requestorProduct = JSON.stringify(requestorProduct);
+
+            if(index === barter.length-1){
+                setTimeout(() => {
+                    console.log('barter :>> ', barter);
+                    res.json(barter);
+                }, 1500);
+            }
+        });
+    } catch (err){
+        console.log(err);
+    }
 }
 
 
@@ -246,11 +213,17 @@ const request_update_response = async (req, res) => {
         let requestorProduct = await Item.findByIdAndUpdate(doc.requestorProduct, { availability: false });
         let requesteeProduct = await Item.findByIdAndUpdate(doc.requesteeProduct, { availability: false });
     }
-
     res.json({'response': doc.response});
-
 }
 
+
+const fake_api = (req, res) => {
+
+    console.log('WELCOME TO MY FAKE API');
+    for(let i = 0; i < 10; i++){
+        console.log(i);
+    }
+}
 module.exports = {
     item_index,
     item_details,
@@ -264,5 +237,6 @@ module.exports = {
     request_outgoing,
     request_incoming,
     request_all,
-    request_update_response
+    request_update_response,
+    fake_api
 }

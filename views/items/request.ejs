@@ -18,8 +18,10 @@
             <div class="incoming"></div>
         </div>
         <div class="row">
+           <div class="outgoing">
             <h2>outgoing request</h2>
-           <div class="outgoing"></div>
+
+           </div>
         </div>
 
 
@@ -128,7 +130,6 @@
             .then(res =>{
                 let box = '';
                 res.forEach(request => {
-                    // console.log('request', request);
                     const message = request.message;
                     const response = request.response;
                     const requestor = JSON.parse(request.requestor);
@@ -158,11 +159,12 @@
                                         Your barter message: ${message}
                                     </div>
                                 </div>`;
-                    outgoing_box.innerHTML += box;
                 });
-            })
-            .catch(err => console.log(err)); // end of outgoing
+                outgoing_box.innerHTML += box;
+
+            }).catch(err => console.log(err)); // end of outgoing
             
+
         const history = document.querySelector('.history');
         // fetch all
         fetch('/items/all')

@@ -28,7 +28,6 @@ app.set('view engine', 'ejs');
 
 
 
-
 // connect to mongodb
 const dbURI = 'mongodb+srv://miguel:snowfall@nodetuts.hzgvu.mongodb.net/barter-app-db?retryWrites=true&w=majority';
 mongoose.connect(dbURI, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true})
@@ -40,12 +39,9 @@ mongoose.connect(dbURI, { useCreateIndex: true, useNewUrlParser: true, useUnifie
 app.get('*', checkUser); // all routes
 
 app.get('/', (req, res) => {
-    // res.sendFile('./views/index.html', { root: __dirname });
-    // res.render('index', { title: 'barter-shit' });
     res.redirect('/items');
 });
 app.get('/about', (req, res) => {
-    // res.sendFile('./views/about.html', { root: __dirname });
     res.render('about', { title: 'About Page' });
 });
 

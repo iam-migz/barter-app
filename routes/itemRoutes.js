@@ -22,6 +22,8 @@ router.get('/incoming', requireAuth, itemController.request_incoming);
 
 router.get('/all', requireAuth, itemController.request_all);
 
+router.get('/fake', requireAuth, itemController.fake_api);
+
 router.post('/update/:requestID', requireAuth, itemController.request_update_response);
 
 

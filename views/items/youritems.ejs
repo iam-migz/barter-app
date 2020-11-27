@@ -7,7 +7,7 @@
   <div class="container">
     
     <%- include('../partials/usernav.ejs'); %> 
-    <h1 class="display-4">Your items <%= (4>2) ? 'miguel': 'false';  %> </h1>
+    <h1 class="display-4">Your items</h1>
     <div class="row">
     <% if(items.length != 0){ %> 
     <% items.forEach(elem => {  %> 
@@ -24,7 +24,7 @@
               <p class="card-text"> <%= elem.address %></p>
               <p class="card-text">Updated at: <%= updatedAt %></p>
               <p class="card-text">Created at: <%= createdAt %></p>
-              <a href="#" class="btn btn-danger delete" data-doc="<%= elem._id %>">Delete</a>
+              <a href="#" class="btn btn-danger btn-block delete" data-doc="<%= elem._id %>">Delete</a>
             </div>
         </div>
     <% }); %> 

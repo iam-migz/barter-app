@@ -9,7 +9,7 @@
     <%  const createdAt = `${item.createdAt.getDate()}/${item.createdAt.getMonth()}/${item.createdAt.getFullYear()}`; %>
 
         <div class="card font-weight-light mx-auto" style="width: 18rem;">
-            <img src="/img/watch.jpg" class="card-img-top" alt="...">
+            <img src="/items/image/<%=item.filename %>" class="card-img-top" alt="...">
             <div class="card-body">
               <h5 class="card-title"><%= item.title %></h5>
               <p class="card-text"><%= item.description %></p>
@@ -29,7 +29,7 @@
                         <path fill-rule="evenodd" d="M15 5H1v8h14V5zM1 4a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H1z"/>
                         <path d="M13 5a2 2 0 0 0 2 2V5h-2zM3 5a2 2 0 0 1-2 2V5h2zm10 8a2 2 0 0 1 2-2v2h-2zM3 13a2 2 0 0 0-2-2v2h2zm7-4a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
                     </svg>
-                    <%= item.price %>
+                    ₱ <%= item.price.toLocaleString()  %>
                 </li>
                 <li class="list-group-item">
                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-person-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

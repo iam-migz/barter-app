@@ -2,7 +2,41 @@ const Item = require('../models/item');
 const User = require('../models/User'); 
 const Barter = require('../models/Barter'); 
 const mongoose = require('mongoose');
-// item_index, item_details, item_create_get, item_create_post, item_delete
+const methodOverride = require('method-override');
+
+// initialize gridfs stream todo crud on images
+let gfs;
+
+mongoose.connection.once('open', () => {
+    console.log('connection opened');
+    gfs = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+        bucketName: 'photos'
+    });
+});
+
+// render image
+const image_render = (req, res) => {
+    gfs.find({ filename: req.params.filename }).toArray((err, files) => {
+
+        if (!files[0] || files.length === 0) {
+            return res.status(200).json({
+                success: false,
+                message: 'No files available'
+            });
+        }
+
+        if (files[0].contentType === 'image/jpeg'
+            || files[0].contentType === 'image/png'
+            || files[0].contentType === 'image/svg+xml') {
+            // read & write stream using pipe
+            gfs.openDownloadStreamByName(req.params.filename).pipe(res);
+        } else {
+            res.status(404).json({
+                err: 'Not an image'
+            });
+        }
+    });
+}
 
 const item_index =  (req, res) => {
     Item.find().sort({ createdAt: -1 })
@@ -36,6 +70,7 @@ const item_create_post = (req, res) => {
     // we get res.locals.user because i put the checkUser in this route
     req.body.seller = res.locals.user._id.toString();
     req.body.availability = true;
+    req.body.filename = req.file.filename;
     const item = new Item(req.body);
     item.save()
         .then(result => res.redirect('/items'))
@@ -43,10 +78,26 @@ const item_create_post = (req, res) => {
 }
 
 
-const item_delete = (req, res) => { // ajax request, can't redirect on an ajax req
+const item_delete = (req, res) => { // ajax request, can't redirect on an ajax req, maybe idk
+
     const id = req.params.id;
+
     Item.findByIdAndDelete(id)
-        .then(result => res.json({ redirect: '/items'})) // send back redirect code in a json to ajax request
+        .then(result => {
+
+            gfs.find({ filename: result.filename }).toArray((err, files) => { // get the objectID of the image
+                if (err) {
+                    console.log(err);
+                }
+                gfs.delete(new mongoose.Types.ObjectId(files[0]._id), (errdelete, data) => {  // delete image using obtained objectID
+                    if (err){
+                        console.log(err);
+                    }
+                });
+            });
+
+            res.json({ redirect: '/items'});
+        }) 
         .catch(err => console.log(err));
 }
 
@@ -204,7 +255,7 @@ const request_update_response = async (req, res) => {
 
     const id = mongoose.Types.ObjectId(req.params.requestID);
 
-    let doc = await Barter.findOneAndUpdate({ _id: id}, req.body, {
+    let doc = await Barter.findOneAndUpdate({ _id: id }, req.body, {
         returnOriginal: false
     });
 
@@ -216,14 +267,6 @@ const request_update_response = async (req, res) => {
     res.json({'response': doc.response});
 }
 
-
-const fake_api = (req, res) => {
-
-    console.log('WELCOME TO MY FAKE API');
-    for(let i = 0; i < 10; i++){
-        console.log(i);
-    }
-}
 module.exports = {
     item_index,
     item_details,
@@ -238,5 +281,5 @@ module.exports = {
     request_incoming,
     request_all,
     request_update_response,
-    fake_api
+    image_render
 }

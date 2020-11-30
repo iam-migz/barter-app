@@ -1,7 +1,13 @@
 const { render } = require('ejs');
 const express = require('express');
 const mongoose = require('mongoose');
+
 const cookieParser = require('cookie-parser');
+const dotenv = require('dotenv').config();
+const morgan = require('morgan');
+
+
+
 const { requireAuth, checkUser } = require('./middleware/authMiddleware');
 
 const authRoutes = require('./routes/authRoutes');
@@ -20,7 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
-
+app.use(morgan('dev'));
 
 // register view engine 
 app.set('view engine', 'ejs'); 
@@ -28,11 +34,15 @@ app.set('view engine', 'ejs');
 
 
 
-// connect to mongodb
-const dbURI = 'mongodb+srv://miguel:snowfall@nodetuts.hzgvu.mongodb.net/barter-app-db?retryWrites=true&w=majority';
-mongoose.connect(dbURI, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true})
-    .then((result) => app.listen(3000))
+
+// connect to mongodb (default connection) @ mongoose.connection
+mongoose.connect(process.env.MONGODB_URI, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true })
+    .then((result) =>{
+        app.listen(process.env.PORT);
+        console.log(`Port at ${process.env.PORT}`);
+    })
     .catch((err) => console.log(err));
+
 
 
 // routes
@@ -54,5 +64,5 @@ app.use(authRoutes);
 
 // 404 page, using a middleware, 'catch-all' 
 app.use((req, res) => {
-    res.status(404).render('404', { title: '404' });
+    res.status(404).render('404');
 });

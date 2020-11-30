@@ -25,10 +25,10 @@
           <%  temparray.forEach(elem => { %>
 
             <div class="card col-md-3 mx-auto" style="width: 17rem;">
-                <img src="img/watch.jpg" class="card-img-top" alt="...">
+                <img src="/items/image/<%=elem.filename %>" class="card-img-top" alt="..." style="height: 16rem;">
                 <div class="card-body">
                   <h5 class="card-title"><%= elem.title %></h5>
-                  <p class="car-text">₱ <%= elem.price %></p>
+                  <p class="car-text">₱ <%= elem.price.toLocaleString() %></p>
                   <a href="/items/<%= elem.id %>" class="btn btn-primary">View more</a>
                 </div>
             </div>

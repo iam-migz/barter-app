@@ -26,6 +26,9 @@ const itemSchema = new Schema({
     availability: {
         type: Boolean,
         required: true
+    },
+    filename: {
+        type: String
     }
 }, { timestamps: true });
 

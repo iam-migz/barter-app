@@ -3,10 +3,29 @@ const itemController = require('../controllers/itemController');
 const router = express.Router();
 const { checkUser, requireAuth } = require('../middleware/authMiddleware');
 
+const multer = require('multer');
+const GridFsStorage = require('multer-gridfs-storage');
+const path = require('path');
+
+// create storage engine for image upload
+const storage = new GridFsStorage({
+    url: process.env.MONGODB_URI,
+    options: { useUnifiedTopology: true },
+    file: (req, file) => {
+      return {
+        filename: 'image_' + Date.now() + path.extname(file.originalname),
+        bucketName: 'photos'
+      }; 
+    }
+});
+
+// set multer storage engine
+const upload = multer({ storage });
+
 
 router.get('/', itemController.item_index);
 
-router.post('/', checkUser, itemController.item_create_post);
+router.post('/', upload.single('image'), checkUser, itemController.item_create_post);
 
 router.get('/create', requireAuth, itemController.item_create_get);
 
@@ -22,11 +41,9 @@ router.get('/incoming', requireAuth, itemController.request_incoming);
 
 router.get('/all', requireAuth, itemController.request_all);
 
-router.get('/fake', requireAuth, itemController.fake_api);
-
 router.post('/update/:requestID', requireAuth, itemController.request_update_response);
 
-
+router.get('/image/:filename', itemController.image_render);
 
 router.get('/barter/:prodID/:sellerID', requireAuth, itemController.item_barter_get);
 

@@ -17,7 +17,7 @@
 
             <span class="badge badge-pill badge-<%= (elem.availability)?'success':'secondary' %> mx-auto mt-4" style="width: 8rem;"><%= (elem.availability)?'Item Listed':'Item Unlisted' %></span>
 
-            <img src="/img/watch.jpg" class="card-img-top" alt="item image">
+            <img src="/items/image/<%=elem.filename %>" class="card-img-top" alt="item image" style="height: 18rem;">
             <div class="card-body">
               <h5 class="card-title"><%= elem.title %></h5>
               <p class="card-text">₱ <%= elem.price %></p>
